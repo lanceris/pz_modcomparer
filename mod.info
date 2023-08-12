@@ -1,0 +1,9 @@
+name=Mod Comparer
+id=ModComparer
+description=Mod mismatch window
+icon=icon.png
+authors=Lanceris
+
+modversion=1.0
+versionMin=41.77
+tags=Build 41,Interface
