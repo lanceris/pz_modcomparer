@@ -5,5 +5,8 @@ icon=icon.png
 authors=Lanceris
 
 modversion=1.0
-versionMin=41.77
+versionMin=41.65
 tags=Build 41,Interface
+
+poster=posters/poster.png
+poster=posters/second.png

@@ -1,0 +1,11 @@
+IGUI_RU = {
+    IGUI_MCTitle = "РќРµСЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ РјРѕРґРѕРІ"
+
+    IGUI_ModsInSave = "РњРѕРґС‹ РІ СЃРѕС…СЂР°РЅРµРЅРёРё"
+    IGUI_EnabledMods = "РђРєС‚РёРІРЅС‹Рµ РјРѕРґС‹"
+
+    IGUI_ButtonLoadSave = "Р—Р°РіСЂСѓР·РёС‚СЊ РёР· СЃРѕС…СЂР°РЅРµРЅРёСЏ"
+    IGUI_ButtonUpdateFromEnabled = "РћР±РЅРѕРІРёС‚СЊ РёР· СЃРѕС…СЂР°РЅРµРЅРёСЏ"
+    IGUI_ButtonUpdateFromSave = "РћР±РЅРѕРІРёС‚СЊ Р°РєС‚РёРІРЅС‹Рµ"
+    IGUI_ButtonLoadEnabled = "Р—Р°РіСЂСѓР·РёС‚СЊ Р°РєС‚РёРІРЅС‹Рµ"
+}

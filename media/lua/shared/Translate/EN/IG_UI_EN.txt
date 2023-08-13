@@ -1,8 +1,11 @@
 IGUI_EN = {
     IGUI_MCTitle = "Mods mismatch"
+
     IGUI_ModsInSave = "Mods in save"
     IGUI_EnabledMods = "Enabled mods"
+
     IGUI_ButtonLoadSave = "Load from save"
-    IGUI_ButtonUpdateSave = "Update save mods"
-    IGUI_ButtonLoadAnyway = "Load anyway"
+    IGUI_ButtonUpdateFromEnabled = "Update from save"
+    IGUI_ButtonUpdateFromSave = "Update from enabled"
+    IGUI_ButtonLoadEnabled = "Load from enabled"
 }

@@ -1,4 +1,4 @@
-ModComparerWindow = ISPanel:derive("ModComparerWindow")
+ModComparerWindow = ISPanelJoypad:derive("ModComparerWindow")
 
 
 function ModComparerWindow:initialise()
@@ -20,8 +20,9 @@ function ModComparerWindow:createChildren()
     --endregion
 
     --region title
-    self.title = ISLabel:new(self.closeButton:getRight() + 2, self.margin, self.fontHgt, getText('IGUI_MCTitle'), 1, 1, 1,
-        1, self.font,
+    self.title = ISLabel:new(self.closeButton:getRight() + 2, self.margin, self.fontTitleHgt, getText('IGUI_MCTitle'), 1,
+        1, 1,
+        1, self.fontTitle,
         true)
     self.title:initialise()
     --endregion
@@ -30,7 +31,7 @@ function ModComparerWindow:createChildren()
     local tY = self.title.height + 4 * self.margin
     local tH = self.height - tY - 2 * self.margin - btnH
     self.table = ISScrollingListBox:new(self.margin, tY,
-        self.width - 2 * self.margin, tH + 10
+        self.width - 2 * self.margin, tH
     )
     self.table:initialise()
     self.table:instantiate()
@@ -48,46 +49,69 @@ function ModComparerWindow:createChildren()
     local btnW = 100
     local btnY = self.height - self.margin - btnH
     --region load save
-    --ISButton:new(x, y, width, height, title, clicktarget, onclick, onmousedown, allowMouseUpProcessing)
     local btnX = self.margin
     self.buttonLoadSave = ISButton:new(btnX, btnY, btnW, btnH, getText('IGUI_ButtonLoadSave'), self,
         self.onOptionMouseDown)
     self.buttonLoadSave.internal = "LOADSAVE"
+    self.buttonLoadSave:setTooltip(getText("UI_ButtonLoadSaveTooltip", getText("IGUI_ModsInSave")))
     btnX = self.buttonLoadSave:getRight() + self.margin
     --endregion
 
+    --region update enabled
+    self.buttonUpdateFromEnabled = ISButton:new(btnX, btnY, btnW, btnH,
+        getText('IGUI_ButtonUpdateFromEnabled'), self,
+        self.onOptionMouseDown)
+    -- self.buttonUpdateSave:setX(self.table.x + self.table.width - self.buttonUpdateSave:getWidth())
+    self.buttonUpdateFromEnabled.internal = "UPDATEENAB"
+    self.buttonUpdateFromEnabled:setTooltip(getText("UI_ButtonUpdateFromEnabledTooltip", getText("IGUI_ModsInSave"),
+        getText("IGUI_EnabledMods")))
+    btnX = self.buttonUpdateFromEnabled:getRight() + self.margin
+    --endregion
+
     --region update save
-    self.buttonUpdateSave = ISButton:new(btnX, btnY, btnW, btnH, getText('IGUI_ButtonUpdateSave'), self,
+    self.buttonUpdateFromSave = ISButton:new(btnX, btnY, btnW, btnH,
+        getText('IGUI_ButtonUpdateFromSave'), self,
         self.onOptionMouseDown)
-    self.buttonUpdateSave.internal = "UPDATE"
-    btnX = self.buttonUpdateSave:getRight() + self.margin
+    self.buttonUpdateFromSave.internal = "UPDATESAVE"
+    self.buttonUpdateFromSave:setTooltip(getText("UI_ButtonUpdateFromSaveTooltip", getText("IGUI_EnabledMods"),
+        getText("IGUI_ModsInSave")))
+    btnX = self.buttonUpdateFromSave:getRight() + self.margin
     --endregion
 
-    --region load anyway
 
-    self.buttonLoadAnyway = ISButton:new(btnX, btnY, btnW, btnH, getText('IGUI_ButtonLoadAnyway'), self,
+
+    --region load enabled
+
+    self.buttonLoadEnabled = ISButton:new(btnX, btnY, btnW, btnH, getText('IGUI_ButtonLoadEnabled'), self,
         self.onOptionMouseDown)
-    self.buttonLoadAnyway.internal = "LOADANY"
-    btnX = self.buttonLoadAnyway:getRight() + self.margin
+    self.buttonLoadEnabled.internal = "LOADANY"
+    self.buttonLoadEnabled:setTooltip(getText("UI_ButtonLoadEnabledTooltip", getText("IGUI_EnabledMods")))
+    btnX = self.buttonLoadEnabled:getRight() + self.margin
 
     --endregion
     --endregion
+
+    self:setWidth(btnX)
+    self:setX(getCore():getScreenWidth() / 2 - self.width / 2)
+    self:setY(getCore():getScreenHeight() / 2 - self.height / 2)
+    self.table:setWidth(self.width - 2 * self.margin)
+    self.table.columns[2].size = self.table.width / 2
+    self.title:setX(self.width / 2 - self.title.width / 2)
 
     self:addChild(self.title)
     self:addChild(self.table)
     self:addChild(self.buttonLoadSave)
-    self:addChild(self.buttonUpdateSave)
-    self:addChild(self.buttonLoadAnyway)
-    -- df:df()
+    self:addChild(self.buttonUpdateFromEnabled)
+    self:addChild(self.buttonUpdateFromSave)
+    self:addChild(self.buttonLoadEnabled)
 end
 
 function ModComparerWindow:close()
     self:setVisible(false)
     self:removeFromUIManager()
-    -- MC_main.toggleUI(self)
-    if MC_btn.btn then
-        MC_btn.toggleBtn() -- FIXME remove in prod
-    end
+    -- if MC_main.MC_btn.btn then
+    --     MC_main.MC_btn.toggleBtn()
+    -- end
 end
 
 function ModComparerWindow:populate()
@@ -95,16 +119,13 @@ function ModComparerWindow:populate()
     local wMax1 = self.table.columns[2].size - self.table.x
     local wMax2 = self.table.width - self.table.columns[2].size
     for i, row in ipairs(self.mods) do
-        local avMod = row.sav and row.sav or row.cur
+        local avMod = row.sav ~= "" and row.sav or row.cur
         row.info = MC_main.getModInfo(avMod)
 
-        local w1 = getTextManager():MeasureStringX(self.font, row.sav)
-        local w2 = getTextManager():MeasureStringX(self.font, row.cur)
+        local w = getTextManager():MeasureStringX(self.font, row.info.name)
         local item = self.table:addItem(i, row)
-        if w1 > wMax1 then
-            item.tooltip = row.sav
-        elseif w2 > wMax2 then
-            item.tooltip = row.cur
+        if w > wMax1 or w > wMax2 then
+            item.tooltip = row.info.name
         end
     end
 end
@@ -129,13 +150,16 @@ function ModComparerWindow:doDrawItem(y, item, alt)
         sc.g = 0.333
         sc.b = 0.192
         self:drawRect(sc.x, sc.y, sc.w, sc.h, sc.a, sc.r, sc.g, sc.b)
-        savT = item.item.info.name
+        curT = item.item.info.name
     elseif item.item.out == "+" then
         sc.r = 0.286
         sc.g = 0.086
         sc.b = 0.084
         self:drawRect(sc.x, sc.y, sc.w, sc.h, sc.a, sc.r, sc.g, sc.b)
+        savT = item.item.info.name
+    elseif item.item.out == "." then
         curT = item.item.info.name
+        savT = item.item.info.name
     end
 
     self:drawRectBorder(0, (y), self:getWidth(), item.height, 0.5, self.borderColor.r, self.borderColor.g,
@@ -161,15 +185,33 @@ function ModComparerWindow:doDrawItem(y, item, alt)
 end
 
 function ModComparerWindow:onOptionMouseDown(button, x, y)
+    local defaultMods = ActiveMods.getById("default")
+    local currentMods = ActiveMods.getById("currentGame")
+    local saveInfo = getSaveInfo(getWorld():getWorld())
+    local saveMods = saveInfo.activeMods
+
     if button.internal == "LOADSAVE" then
-        df:df()
+        currentMods:copyFrom(saveMods)
     end
-    if button.internal == "UPDATE" then
-        self:reload()
+    if button.internal == "UPDATEENAB" then
+        defaultMods:copyFrom(saveMods)
+        saveModsFile()
+        currentMods:copyFrom(saveMods)
+        -- Remove mod IDs for missing mods from ActiveMods.mods
+        currentMods:checkMissingMods()
+        -- Remove unused map directories from ActiveMods.mapOrder
+        currentMods:checkMissingMaps()
+    end
+    if button.internal == "UPDATESAVE" then
+        saveMods:copyFrom(currentMods)
+        local fullSaveName = saveInfo.gameMode .. "\\" .. saveInfo.saveName
+        manipulateSavefile(fullSaveName, "WriteModsDotTxt")
     end
     if button.internal == "LOADANY" then
-
+        -- continue loading as usual
     end
+    local requireReset = ActiveMods.requiresResetLua(currentMods)
+    MainScreen._continue(not requireReset)
 end
 
 function ModComparerWindow:onMouseMove(dx, dy)
@@ -178,7 +220,6 @@ function ModComparerWindow:onMouseMove(dx, dy)
     if self.moving then
         self:setX(self.x + dx)
         self:setY(self.y + dy)
-        -- self:bringToTop()
     end
 end
 
@@ -188,7 +229,6 @@ function ModComparerWindow:onMouseMoveOutside(dx, dy)
     if self.moving then
         self:setX(self.x + dx)
         self:setY(self.y + dy)
-        -- self:bringToTop()
     end
 end
 
@@ -206,17 +246,18 @@ end
 
 function ModComparerWindow:new(x, y, width, height, mods)
     local o = {}
-    o = ISPanel:new(x, y, width, height)
+    o = ISPanelJoypad:new(x, y, width, height)
     setmetatable(o, self)
     self.__index = self
 
     o.mods = mods
     o.margin = 10
     o.backgroundColor.a = 1
-    o.borderColor.r = 1
     o.borderColor.a = 1
-    o.font = UIFont.Small
+    o.font = UIFont.NewSmall
     o.fontHgt = getTextManager():getFontHeight(o.font)
+    o.fontTitle = UIFont.Medium
+    o.fontTitleHgt = getTextManager():getFontHeight(o.font)
     o.closeButtonTexture = getTexture("media/ui/Dialog_Titlebar_CloseIcon.png")
 
     o:instantiate()
@@ -224,40 +265,3 @@ function ModComparerWindow:new(x, y, width, height, mods)
     o.javaObject:setIgnoreLossControl(true)
     return o
 end
-
--- MainScreen.continueLatestSaveAux
-
--- function ModComparerWindow:cellAt(x, y)
---     local y0 = 0
---     local col
---     local res = {}
---     for i, v in ipairs(self.items) do
---         if not v.height then v.height = self.itemheight end -- compatibililty
---         if y >= y0 and y < y0 + v.height then
---             res.row = i
---             if self.columns then
---                 for j = 1, #self.columns do
---                     if j == 1 and x > 0 and x < self.columns[j + 1].size then
---                         col = 1
---                     elseif j == #self.columns and x > self.columns[j].size and x < self.width then
---                         col = #self.columns
---                     elseif x > self.columns[j].size and x < self.columns[j + 1].size then
---                         col = j
---                     end
---                     if col then res.col = col end
---                 end
---             end
---             return res
---         end
---         y0 = y0 + v.height
---     end
---     return -1
--- end
-
--- function ModComparerWindow:onMouseMoveTable(dx, dy)
---     ISScrollingListBox.onMouseMove(self, dx, dy)
---     self.mouseovercell = self.parent.cellAt(self, self:getMouseX(), self:getMouseY())
---     if self.mouseovercell.col then
---         -- print(self.mouseovercell.row .. "|" .. self.mouseovercell.col)
---     end
--- end

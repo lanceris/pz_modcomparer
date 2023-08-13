@@ -20,7 +20,7 @@ MC_main.arrayListToTable = function(arr)
 end
 
 MC_main.getModInfo = function(modId)
-    local res = { id = modId }
+    local res = { id = modId, name = modId }
     if not modId or modId == "" then return res end
     local info = getModInfoByID(modId)
     res = {
@@ -184,7 +184,8 @@ MC_main.toggleUI = function(ui)
     end
 end
 
-MC_main.createUI = function()
+MC_main.createUI = function(fromResetLua)
+    MC_main.fromResetLua = fromResetLua
     if MC_main.window then
         MC_main.window:setVisible(false)
         MC_main.window:removeFromUIManager()
@@ -211,7 +212,9 @@ end
 
 MainScreen._continue = MainScreen.continueLatestSaveAux
 function MainScreen.continueLatestSaveAux(fromResetLua)
-    MC_main.createUI()
+    if not fromResetLua then
+        MC_main.createUI(fromResetLua)
+    end
     if not MC_main.mods then
         MainScreen._continue(fromResetLua)
     end

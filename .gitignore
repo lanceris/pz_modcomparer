@@ -1,0 +1,7 @@
+.vscode/
+.ignore/
+workshop/
+*.code-workspace
+create_workshop_txt.py
+steam stuff/
+temp/

@@ -1,0 +1,6 @@
+UI_EN = {
+    UI_ButtonLoadSaveTooltip =      "Load mods from '%1' column" -- IGUI_ModsInSave
+    UI_ButtonUpdateFromEnabledTooltip = "Load mods from '%1' column and update '%2'" -- IGUI_ModsInSave, IGUI_EnabledMods
+    UI_ButtonUpdateFromSaveTooltip =    "Load mods from '%1' column and update '%2'" -- IGUI_EnabledMods, IGUI_ModsInSave
+    UI_ButtonLoadEnabledTooltip =    "Load mods from '%1' column" -- IGUI_EnabledMods
+}
