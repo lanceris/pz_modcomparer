@@ -1,6 +1,6 @@
 name=Mod Comparer
 id=ModComparer
-description=Mod mismatch window
+description=This mod will add mods mismatch window, which shows mod diff between saved game and currently activated.
 icon=icon.png
 authors=Lanceris
 
