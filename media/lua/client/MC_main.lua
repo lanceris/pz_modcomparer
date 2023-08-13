@@ -23,19 +23,21 @@ MC_main.getModInfo = function(modId)
     local res = { id = modId, name = modId }
     if not modId or modId == "" then return res end
     local info = getModInfoByID(modId)
-    res = {
-        workshopId = info:getWorkshopID(),
-        name = info:getName(),
-        dir = info:getDir(),
-        desc = info:getDescription(),
-        -- req = info:getRequire(),
-        -- isAv = info:isAvailable(),
-        -- url = info:getUrl(),
-        -- vMin = info:getVersionMin(),
-        -- vMax = info:getVersionMax(),
-        -- packs = info:getPacks(),
-        -- tileDefs = info:getTileDefs(),
-    }
+    if info then
+        res = {
+            workshopId = info:getWorkshopID(),
+            name = info:getName(),
+            dir = info:getDir(),
+            desc = info:getDescription(),
+            -- req = info:getRequire(),
+            -- isAv = info:isAvailable(),
+            -- url = info:getUrl(),
+            -- vMin = info:getVersionMin(),
+            -- vMax = info:getVersionMax(),
+            -- packs = info:getPacks(),
+            -- tileDefs = info:getTileDefs(),
+        }
+    end
     return res
 end
 
