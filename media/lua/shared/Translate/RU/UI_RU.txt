@@ -1,6 +1,6 @@
 UI_RU = {
-    UI_ButtonLoadSaveTooltip =      "Р—Р°РіСЂСѓР·РёС‚СЊ РјРѕРґС‹ РёР· '%1'" -- IGUI_ModsInSave
-    UI_ButtonUpdateFromEnabledTooltip = "Р—Р°РіСЂСѓР·РёС‚СЊ РјРѕРґС‹ РёР· '%1' Рё РѕР±РЅРѕРІРёС‚СЊ '%2'" -- IGUI_ModsInSave, IGUI_EnabledMods
-    UI_ButtonUpdateFromSaveTooltip =    "Р—Р°РіСЂСѓР·РёС‚СЊ РјРѕРґС‹ РёР· '%1' Рё РѕР±РЅРѕРІРёС‚СЊ '%2'" -- IGUI_EnabledMods, IGUI_ModsInSave
-    UI_ButtonLoadEnabledTooltip =    "Р—Р°РіСЂСѓР·РёС‚СЊ РјРѕРґС‹ РёР· '%1'" -- IGUI_EnabledMods
+    UI_ButtonLoadSaveTooltip =      "Загрузить моды из '%1'" -- IGUI_ModsInSave
+    UI_ButtonUpdateFromEnabledTooltip = "Загрузить моды из '%1' и обновить '%2'" -- IGUI_ModsInSave, IGUI_EnabledMods
+    UI_ButtonUpdateFromSaveTooltip =    "Загрузить моды из '%1' и обновить '%2'" -- IGUI_EnabledMods, IGUI_ModsInSave
+    UI_ButtonLoadEnabledTooltip =    "Загрузить моды из '%1'" -- IGUI_EnabledMods
 }
