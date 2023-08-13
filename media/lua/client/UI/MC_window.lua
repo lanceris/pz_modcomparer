@@ -10,7 +10,7 @@ function ModComparerWindow:createChildren()
 
 
     --region close button
-    self.closeButton = ISButton:new(self.margin, 7, 24, 24, "", self, self.close)
+    self.closeButton = ISButton:new(self.margin, self.margin, 24, 24, "", self, self.close)
     self.closeButton:initialise()
     self.closeButton.borderColor.a = 0.0
     self.closeButton.backgroundColor.a = 0
@@ -19,8 +19,21 @@ function ModComparerWindow:createChildren()
     self:addChild(self.closeButton);
     --endregion
 
+    --region condense button
+    self.buttonCondense = ISButton:new(self.closeButton:getRight() + 2, self.margin, 24, 24, "", self,
+        self.onOptionMouseDown)
+    self.buttonCondense.internal = "CONDENSE"
+    self.buttonCondense.borderColor.a = 0.0
+    self.buttonCondense.isOn = false
+    self.buttonCondense:setImage(self.condenseOffTexture)
+    self.buttonCondense:setTooltip(getText("UI_ButtonCondensedViewOffTooltip"))
+    self.buttonCondense:initialise()
+
+    --endregion
+
     --region title
-    self.title = ISLabel:new(self.closeButton:getRight() + 2, self.margin, self.fontTitleHgt, getText('IGUI_MCTitle'), 1,
+    self.title = ISLabel:new(self.buttonCondense:getRight() + 2, self.margin, self.fontTitleHgt, getText('IGUI_MCTitle'),
+        1,
         1, 1,
         1, self.fontTitle,
         true)
@@ -28,7 +41,7 @@ function ModComparerWindow:createChildren()
     --endregion
 
     --region text panel
-    local tY = self.title.height + 4 * self.margin
+    local tY = math.max(self.title.height, self.buttonCondense.height) + 4 * self.margin
     local tH = self.height - tY - 2 * self.margin - btnH
     self.table = ISScrollingListBox:new(self.margin, tY,
         self.width - 2 * self.margin, tH
@@ -97,19 +110,21 @@ function ModComparerWindow:createChildren()
     self.table:setWidth(self.width - 2 * self.margin)
     self.table.columns[2].size = self.table.width / 2
     self.title:setX(self.width / 2 - self.title.width / 2)
-
     self:addChild(self.title)
     self:addChild(self.table)
+    self:addChild(self.buttonCondense)
     self:addChild(self.buttonLoadSave)
     self:addChild(self.buttonUpdateFromEnabled)
     self:addChild(self.buttonUpdateFromSave)
     self:addChild(self.buttonLoadEnabled)
+
+    self._mods = copyTable(self.mods)
 end
 
 function ModComparerWindow:close()
     self:setVisible(false)
     self:removeFromUIManager()
-    -- if MC_main.MC_btn.btn then
+    -- if MC_main.MC_btn and MC_main.MC_btn.btn then
     --     MC_main.MC_btn.toggleBtn()
     -- end
 end
@@ -118,7 +133,7 @@ function ModComparerWindow:populate()
     self.table:clear()
     local wMax1 = self.table.columns[2].size - self.table.x
     local wMax2 = self.table.width - self.table.columns[2].size
-    for i, row in ipairs(self.mods) do
+    for i, row in ipairs(self._mods) do
         local avMod = row.sav ~= "" and row.sav or row.cur
         row.info = MC_main.getModInfo(avMod)
 
@@ -128,11 +143,6 @@ function ModComparerWindow:populate()
             item.tooltip = row.info.name
         end
     end
-end
-
-function ModComparerWindow:reload()
-    self.mods = MC_main.calculate()
-    self:populate()
 end
 
 function ModComparerWindow:doDrawItem(y, item, alt)
@@ -184,12 +194,40 @@ function ModComparerWindow:doDrawItem(y, item, alt)
     return y
 end
 
+function ModComparerWindow:applyCondense(state)
+    local newMods = {}
+    if state then
+        newMods = self.diff
+    else
+        newMods = self.mods
+    end
+    self._mods = newMods
+    self:populate()
+end
+
+function ModComparerWindow:toggleCondenseState()
+    self.buttonCondense.isOn = not self.buttonCondense.isOn
+    if not self.buttonCondense.isOn then
+        self.buttonCondense:setImage(self.condenseOffTexture)
+        self.buttonCondense:setTooltip(getText("UI_ButtonCondensedViewOffTooltip"))
+        self:applyCondense(false)
+    else
+        self.buttonCondense:setImage(self.condenseOnTexture)
+        self.buttonCondense:setTooltip(getText("UI_ButtonCondensedViewOnTooltip"))
+        self:applyCondense(true)
+    end
+end
+
 function ModComparerWindow:onOptionMouseDown(button, x, y)
     local defaultMods = ActiveMods.getById("default")
     local currentMods = ActiveMods.getById("currentGame")
     local saveInfo = getSaveInfo(getWorld():getWorld())
     local saveMods = saveInfo.activeMods
 
+    if button.internal == "CONDENSE" then
+        self:toggleCondenseState()
+        return
+    end
     if button.internal == "LOADSAVE" then
         currentMods:copyFrom(saveMods)
     end
@@ -244,13 +282,14 @@ function ModComparerWindow:onMouseDown(x, y)
     self.moving = true
 end
 
-function ModComparerWindow:new(x, y, width, height, mods)
+function ModComparerWindow:new(x, y, width, height, mods, diff)
     local o = {}
     o = ISPanelJoypad:new(x, y, width, height)
     setmetatable(o, self)
     self.__index = self
 
     o.mods = mods
+    o.diff = diff
     o.margin = 10
     o.backgroundColor.a = 1
     o.borderColor.a = 1
@@ -259,6 +298,8 @@ function ModComparerWindow:new(x, y, width, height, mods)
     o.fontTitle = UIFont.Medium
     o.fontTitleHgt = getTextManager():getFontHeight(o.font)
     o.closeButtonTexture = getTexture("media/ui/Dialog_Titlebar_CloseIcon.png")
+    o.condenseOnTexture = getTexture("media/textures/off.png")
+    o.condenseOffTexture = getTexture("media/textures/on.png")
 
     o:instantiate()
     o:setAlwaysOnTop(true)

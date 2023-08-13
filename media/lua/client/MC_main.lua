@@ -99,16 +99,26 @@ local function reverse(tab)
     return tab
 end
 
+local function table_invert(t)
+    local s = {}
+    for k, v in pairs(t) do
+        s[v] = k
+    end
+    return s
+end
+
 MC_main.calculate = function()
     local currentMods, saveMods = MC_main.getMods()
     currentMods = MC_main.arrayListToTable(currentMods)
     saveMods = MC_main.arrayListToTable(saveMods)
-    -- saveMods = { "a", "b", "c", "d", "e" }
-    -- currentMods = { "a", "b", "c", "e", "d" }
+    -- saveMods = { "a", "b", "c", "d", "e", "f", "g", "mod" }
+    -- currentMods = { "a", "d", "mod2", "b", "c", "e", "f", "g" }
     local result = {}
     if not MC_main.areTablesDifferent(saveMods, currentMods) then
         return result
     end
+    local savR = table_invert(saveMods)
+    local curR = table_invert(currentMods)
 
     currentMods = reverse(currentMods)
     saveMods = reverse(saveMods)
@@ -168,7 +178,24 @@ MC_main.calculate = function()
         cur = pop(currentMods)
     end
 
-    return result
+
+    local diff = {}
+    for i = 1, #result do
+        local en = result[i]
+        if en.out ~= "." then
+            if en.sav ~= "" then
+                if not curR[en.sav] then
+                    table.insert(diff, en)
+                end
+            else
+                if not savR[en.cur] then
+                    table.insert(diff, en)
+                end
+            end
+        end
+    end
+
+    return result, diff
 end
 
 MC_main.toggleUI = function(ui)
@@ -193,7 +220,7 @@ MC_main.createUI = function(fromResetLua)
         MC_main.window:removeFromUIManager()
         MC_main.window = nil
     end
-    MC_main.mods = MC_main.calculate()
+    MC_main.mods, MC_main.diff = MC_main.calculate()
     if MC_main.empty(MC_main.mods) then
         MC_main.mods = nil
         return
@@ -205,7 +232,8 @@ MC_main.createUI = function(fromResetLua)
         w = 400,
         h = 600
     }
-    MC_main.window = ModComparerWindow:new(win.x - win.w / 2, win.y - win.h / 2, win.w, win.h, MC_main.mods)
+    MC_main.window = ModComparerWindow:new(win.x - win.w / 2, win.y - win.h / 2, win.w, win.h,
+        MC_main.mods, MC_main.diff)
     MC_main.window:initialise()
     MC_main.window:populate()
     MC_main.window:setVisible(true)
