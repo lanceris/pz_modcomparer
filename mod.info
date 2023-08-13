@@ -9,4 +9,5 @@ versionMin=41.65
 tags=Build 41,Interface
 
 poster=posters/poster.png
-poster=posters/second.png
+poster=posters/condensed.png
+poster=posters/condensed_desc.png
