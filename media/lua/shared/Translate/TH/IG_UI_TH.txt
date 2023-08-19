@@ -1,0 +1,9 @@
+IGUI_TH = {
+    IGUI_MCTitle = "ม็อดที่ใช้ไม่ตรงกัน"
+    IGUI_ModsInSave = "ม็อดที่ใช้ในเซฟ"
+    IGUI_EnabledMods = "ม็อดที่เปิดใช้งาน"
+    IGUI_ButtonLoadSave = "โหลดด้วยม็อดที่ใข้ในเซฟ"
+    IGUI_ButtonUpdateFromEnabled = "อัปเดตด้วยม็อดที่ใข้ในเซฟ"
+    IGUI_ButtonUpdateFromSave = "อัปเดตเซฟด้วยม็อดที่เปิดใช้งาน"
+    IGUI_ButtonLoadEnabled = "โหลดด้วยม็อดที่เปิดใช้งาน"
+}

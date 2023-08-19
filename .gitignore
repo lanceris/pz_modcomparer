@@ -3,5 +3,6 @@
 workshop/
 *.code-workspace
 create_workshop_txt.py
-steam stuff/
+steam stuff/changelogs
 temp/
+workshop.txt

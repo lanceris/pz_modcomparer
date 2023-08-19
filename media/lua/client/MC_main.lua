@@ -238,6 +238,12 @@ MC_main.createUI = function(fromResetLua)
     MC_main.window:populate()
     MC_main.window:setVisible(true)
     MC_main.window:addToUIManager()
+    local joypadData = JoypadState.getMainMenuJoypad()
+    if joypadData then
+        MC_main.window.prevFocus = joypadData.focus
+        joypadData.focus = MC_main.window
+        updateJoypadFocus(joypadData)
+    end
 end
 
 MainScreen._continue = MainScreen.continueLatestSaveAux
