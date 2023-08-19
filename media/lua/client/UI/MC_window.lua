@@ -2,7 +2,7 @@ ModComparerWindow = ISPanelJoypad:derive("ModComparerWindow")
 
 
 function ModComparerWindow:initialise()
-    ISRichTextPanel.initialise(self)
+    ISPanelJoypad.initialise(self)
 end
 
 function ModComparerWindow:createChildren()
@@ -10,18 +10,19 @@ function ModComparerWindow:createChildren()
 
 
     --region close button
-    self.closeButton = ISButton:new(self.margin, self.margin, 24, 24, "", self, self.close)
-    self.closeButton:initialise()
-    self.closeButton.borderColor.a = 0.0
-    self.closeButton.backgroundColor.a = 0
-    self.closeButton.backgroundColorMouseOver.a = 1
-    self.closeButton:setImage(self.closeButtonTexture)
-    self:addChild(self.closeButton);
+    self.buttonClose = ISButton:new(self.margin, self.margin, 24, 24, "", self, self.close)
+    self.buttonClose:initialise()
+    self.buttonClose.borderColor.a = 0.0
+    self.buttonClose.backgroundColor.a = 0
+    self.buttonClose.backgroundColorMouseOver.a = 1
+    self.buttonClose:setImage(self.buttonCloseTexture)
+
     --endregion
 
     --region condense button
-    self.buttonCondense = ISButton:new(self.closeButton:getRight() + 2, self.margin, 24, 24, "", self,
+    self.buttonCondense = ISButton:new(self.buttonClose:getRight() + 2, self.margin, 24, 24, "", self,
         self.onOptionMouseDown)
+    self.buttonCondense.updateTooltip = self.updateTooltip
     self.buttonCondense.internal = "CONDENSE"
     self.buttonCondense.borderColor.a = 0.0
     self.buttonCondense.isOn = false
@@ -46,10 +47,14 @@ function ModComparerWindow:createChildren()
     self.table = ISScrollingListBox:new(self.margin, tY,
         self.width - 2 * self.margin, tH
     )
+    self.table.onLoseJoypadFocus = self.onLoseJoypadFocus_child
+    self.table.onGainJoypadFocus = self.onGainJoypadFocus_child
+    self.table.onJoypadBeforeDeactivate = self.onJoypadBeforeDeactivate_child
     self.table:initialise()
     self.table:instantiate()
     self.table.itemheight = self.fontHgt + 4 * 2
     self.table.selected = 0
+    self.table.joypadParent = self
     self.table.font = self.font
     self.table.doDrawItem = self.doDrawItem
     -- self.table.onMouseMove = self.onMouseMoveTable
@@ -65,6 +70,7 @@ function ModComparerWindow:createChildren()
     local btnX = self.margin
     self.buttonLoadSave = ISButton:new(btnX, btnY, btnW, btnH, getText('IGUI_ButtonLoadSave'), self,
         self.onOptionMouseDown)
+    self.buttonLoadSave.updateTooltip = self.updateTooltip
     self.buttonLoadSave.internal = "LOADSAVE"
     self.buttonLoadSave:setTooltip(getText("UI_ButtonLoadSaveTooltip", getText("IGUI_ModsInSave")))
     btnX = self.buttonLoadSave:getRight() + self.margin
@@ -75,6 +81,7 @@ function ModComparerWindow:createChildren()
         getText('IGUI_ButtonUpdateFromEnabled'), self,
         self.onOptionMouseDown)
     -- self.buttonUpdateSave:setX(self.table.x + self.table.width - self.buttonUpdateSave:getWidth())
+    self.buttonUpdateFromEnabled.updateTooltip = self.updateTooltip
     self.buttonUpdateFromEnabled.internal = "UPDATEENAB"
     self.buttonUpdateFromEnabled:setTooltip(getText("UI_ButtonUpdateFromEnabledTooltip", getText("IGUI_ModsInSave"),
         getText("IGUI_EnabledMods")))
@@ -85,18 +92,18 @@ function ModComparerWindow:createChildren()
     self.buttonUpdateFromSave = ISButton:new(btnX, btnY, btnW, btnH,
         getText('IGUI_ButtonUpdateFromSave'), self,
         self.onOptionMouseDown)
+    self.buttonUpdateFromSave.updateTooltip = self.updateTooltip
     self.buttonUpdateFromSave.internal = "UPDATESAVE"
     self.buttonUpdateFromSave:setTooltip(getText("UI_ButtonUpdateFromSaveTooltip", getText("IGUI_EnabledMods"),
         getText("IGUI_ModsInSave")))
     btnX = self.buttonUpdateFromSave:getRight() + self.margin
     --endregion
 
-
-
     --region load enabled
 
     self.buttonLoadEnabled = ISButton:new(btnX, btnY, btnW, btnH, getText('IGUI_ButtonLoadEnabled'), self,
         self.onOptionMouseDown)
+    self.buttonLoadEnabled.updateTooltip = self.updateTooltip
     self.buttonLoadEnabled.internal = "LOADANY"
     self.buttonLoadEnabled:setTooltip(getText("UI_ButtonLoadEnabledTooltip", getText("IGUI_EnabledMods")))
     btnX = self.buttonLoadEnabled:getRight() + self.margin
@@ -112,6 +119,7 @@ function ModComparerWindow:createChildren()
     self.title:setX(self.width / 2 - self.title.width / 2)
     self:addChild(self.title)
     self:addChild(self.table)
+    self:addChild(self.buttonClose)
     self:addChild(self.buttonCondense)
     self:addChild(self.buttonLoadSave)
     self:addChild(self.buttonUpdateFromEnabled)
@@ -121,7 +129,11 @@ function ModComparerWindow:createChildren()
     self._mods = copyTable(self.mods)
 end
 
-function ModComparerWindow:close()
+function ModComparerWindow:close(joypadData)
+    if joypadData then
+        joypadData.focus = self.prevFocus
+        updateJoypadFocus(joypadData)
+    end
     self:setVisible(false)
     self:removeFromUIManager()
     -- if MC_main.MC_btn and MC_main.MC_btn.btn then
@@ -282,6 +294,156 @@ function ModComparerWindow:onMouseDown(x, y)
     self.moving = true
 end
 
+--region joypad test
+function ModComparerWindow:onJoypadBeforeDeactivate(joypadData)
+    self.table.joypadFocused = false
+    self.joyfocus = nil
+end
+
+function ModComparerWindow:onGainJoypadFocus(joypadData)
+    ISPanelJoypad.onGainJoypadFocus(self, joypadData)
+    self.drawJoypadFocus = true
+
+    if MC_main.empty(self.joypadButtonsY) then
+        self:loadJoypadButtons(joypadData)
+    end
+end
+
+function ModComparerWindow:onGainJoypadFocus_child(joypadData)
+    ISPanelJoypad.onGainJoypadFocus(self, joypadData)
+    self.joypadFocused = true
+    if #self.joypadButtons >= 1 and self.joypadIndex <= #self.joypadButtons then
+        self.joypadButtons[self.joypadIndex]:setJoypadFocused(true, joypadData)
+    end
+end
+
+function ModComparerWindow:onLoseJoypadFocus_child(joypadData)
+    ISScrollingListBox.onLoseJoypadFocus(self, joypadData)
+    self.parent.listHasFocus = false
+    joypadData.focus = self.parent
+    self.drawJoypadFocus = true
+    updateJoypadFocus(joypadData)
+end
+
+function ModComparerWindow:onJoypadBeforeDeactivate_child(joypadData)
+    self.parent:onJoypadBeforeDeactivate(joypadData)
+end
+
+function ModComparerWindow:loadJoypadButtons(joypadData)
+    joypadData = joypadData or self.joyfocus
+    self.joypadButtonsY = {}
+    self:insertNewLineOfButtons(self.buttonClose, self.buttonCondense)
+    self:insertNewLineOfButtons(self.table)
+    self:insertNewLineOfButtons(self.buttonLoadSave, self.buttonUpdateFromEnabled,
+        self.buttonUpdateFromSave, self.buttonLoadEnabled)
+
+    self.joypadIndex = 1
+    self.joypadIndexY = 1
+    self.joypadButtons = self.joypadButtonsY[self.joypadIndexY]
+    self.joypadButtons[self.joypadIndex]:setJoypadFocused(true)
+end
+
+function ModComparerWindow:onJoypadDown(button, joypadData)
+    if button == Joypad.AButton then
+        if self.joypadButtons[1] == self.table and not self.listHasFocus then
+            self.listHasFocus = true
+            self.joypadButtons[self.joypadIndex]:setJoypadFocused(true, joypadData)
+        elseif self.joypadButtons[self.joypadIndex] == self.buttonClose then
+            self:close(joypadData)
+        end
+    elseif button == Joypad.BButton then
+        if joypadData.focus == self.table then
+            self.listHasFocus = false
+            self.table.joypadFocused = false
+            joypadData.focus = self
+            updateJoypadFocus(joypadData)
+        else
+            self:close(joypadData)
+        end
+    end
+    ISPanelJoypad.onJoypadDown(self, button, joypadData)
+end
+
+function ModComparerWindow:onJoypadDir(direction, joypadData)
+    local children = self:getVisibleChildren(self.joypadIndexY)
+    local child = children[self.joypadIndex]
+
+    if (#self.joypadButtonsY > 0) then
+        child:setJoypadFocused(false, joypadData)
+        if direction == "up" then
+            self.joypadIndexY = self.joypadIndexY - 1
+            if self.joypadIndexY < 1 then
+                self.joypadIndexY = 1 --#self.joypadButtonsY
+            end
+        elseif direction == "down" then
+            self.joypadIndexY = self.joypadIndexY + 1
+            if self.joypadIndexY > #self.joypadButtonsY then
+                self.joypadIndexY = #self.joypadButtonsY --1
+            end
+        end
+        self.joypadButtons = self.joypadButtonsY[self.joypadIndexY];
+        children = self:getVisibleChildren(self.joypadIndexY)
+        self.joypadIndex = 1
+        if children[self.joypadIndex] ~= self.table then
+            children[self.joypadIndex]:setJoypadFocused(true, joypadData)
+        else
+            self.drawJoypadFocus = true
+            self.table.drawJoypadFocus = true
+            if not self.listHasFocus then
+                self.table.joypadFocused = true
+            end
+        end
+    end
+    ISPanelJoypad.ensureVisible(self)
+end
+
+function ModComparerWindow:onJoypadDirUp(joypadData)
+    if self.listHasFocus then
+        self.table:onJoypadDirUp(joypadData)
+    else
+        self:onJoypadDir("up", joypadData)
+    end
+end
+
+function ModComparerWindow:onJoypadDirDown(joypadData)
+    if self.listHasFocus then
+        self.table:onJoypadDirDown(joypadData)
+    else
+        self:onJoypadDir("down", joypadData)
+    end
+end
+
+--endregion
+
+function ModComparerWindow:updateTooltip()
+    if (self:isMouseOver() or self.joypadFocused) and self.tooltip then
+        local text = self.tooltip
+        if not self.tooltipUI then
+            self.tooltipUI = ISToolTip:new()
+            self.tooltipUI:setOwner(self)
+            self.tooltipUI:setVisible(false)
+            self.tooltipUI:setAlwaysOnTop(true)
+        end
+        if not self.tooltipUI:getIsVisible() then
+            if string.contains(self.tooltip, "\n") then
+                self.tooltipUI.maxLineWidth = 1000 -- don't wrap the lines
+            else
+                self.tooltipUI.maxLineWidth = 300
+            end
+            self.tooltipUI:addToUIManager()
+            self.tooltipUI:setVisible(true)
+        end
+        self.tooltipUI.description = text
+        local posX = self.joypadFocused and self.parent.x + self.x or getMouseX()
+        self.tooltipUI:setDesiredPosition(posX, self:getAbsoluteY() + self:getHeight() + 8)
+    else
+        if self.tooltipUI and self.tooltipUI:getIsVisible() then
+            self.tooltipUI:setVisible(false)
+            self.tooltipUI:removeFromUIManager()
+        end
+    end
+end
+
 function ModComparerWindow:new(x, y, width, height, mods, diff)
     local o = {}
     o = ISPanelJoypad:new(x, y, width, height)
@@ -297,7 +459,7 @@ function ModComparerWindow:new(x, y, width, height, mods, diff)
     o.fontHgt = getTextManager():getFontHeight(o.font)
     o.fontTitle = UIFont.Medium
     o.fontTitleHgt = getTextManager():getFontHeight(o.font)
-    o.closeButtonTexture = getTexture("media/ui/Dialog_Titlebar_CloseIcon.png")
+    o.buttonCloseTexture = getTexture("media/ui/Dialog_Titlebar_CloseIcon.png")
     o.condenseOnTexture = getTexture("media/textures/off.png")
     o.condenseOffTexture = getTexture("media/textures/on.png")
 
