@@ -12,6 +12,8 @@ Should be compatible with all mods and MP
 [*]English
 [*]Russian
 [*]Thai
+[*]Simplified Chinese
+[*]Espanol (ES)
 [/list]
 
 If you would like to help with translation, please go to Crowdin page:

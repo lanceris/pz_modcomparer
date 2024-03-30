@@ -1,4 +1,4 @@
-UI_EN = {
+UI_RU = {
     UI_ButtonLoadSaveTooltip = "Загрузить моды из '%1'"
     UI_ButtonUpdateFromEnabledTooltip = "Загрузить моды из '%1' и обновить '%2'"
     UI_ButtonUpdateFromSaveTooltip = "Загрузить моды из '%1' и обновить '%2'"
