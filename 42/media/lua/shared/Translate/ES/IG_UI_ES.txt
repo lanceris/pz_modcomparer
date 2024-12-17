@@ -1,0 +1,9 @@
+IGUI_ES = {
+    IGUI_MCTitle = "Hay mods que no coinciden"
+    IGUI_ModsInSave = "Mods de la partida"
+    IGUI_EnabledMods = "Mods habilitados"
+    IGUI_ButtonLoadSave = "Cargar mods desde partida"
+    IGUI_ButtonUpdateFromEnabled = "Actualizar de partida"
+    IGUI_ButtonUpdateFromSave = "Actualizar de mods habilitados"
+    IGUI_ButtonLoadEnabled = "Cargar de habilitados"
+}

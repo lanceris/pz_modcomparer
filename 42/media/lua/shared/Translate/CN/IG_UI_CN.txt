@@ -1,0 +1,9 @@
+IGUI_CN = {
+    IGUI_MCTitle = "模组不匹配"
+    IGUI_ModsInSave = "保存中的模组"
+    IGUI_EnabledMods = "已启用的模组"
+    IGUI_ButtonLoadSave = "从存档加载"
+    IGUI_ButtonUpdateFromEnabled = "从存档更新"
+    IGUI_ButtonUpdateFromSave = "从已启用的模组中更新"
+    IGUI_ButtonLoadEnabled = "从已启用的模组中读取"
+}

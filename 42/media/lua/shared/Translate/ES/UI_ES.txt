@@ -1,0 +1,8 @@
+UI_ES = {
+    UI_ButtonLoadSaveTooltip = "Cargar mods desde la columna '%1'"
+    UI_ButtonUpdateFromEnabledTooltip = "Cargar mods desde la columna '%1' y actualizar '%2'"
+    UI_ButtonUpdateFromSaveTooltip = "Cargar mods desde la columna '%1' y actualizar '%2'"
+    UI_ButtonLoadEnabledTooltip = "Cargar mods desde la columna '%1'"
+    UI_ButtonCondensedViewOffTooltip = "Vista completa (todos los mods)"
+    UI_ButtonCondensedViewOnTooltip = "Vista compacta (solo añadidos/borrados)"
+}
