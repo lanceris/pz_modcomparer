@@ -1,0 +1,13 @@
+name=Mod Comparer
+id=3019672735/ModComparer
+description=This mod will add mods mismatch window, which shows mod diff between saved game and currently activated.
+icon=icon.png
+authors=Lanceris
+
+modversion=1.4
+versionMin=42.0
+tags=Build 42,Interface
+
+poster=posters/poster.png
+poster=posters/condensed.png
+poster=posters/condensed_desc.png

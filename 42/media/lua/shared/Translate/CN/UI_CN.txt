@@ -1,0 +1,8 @@
+UI_CN = {
+    UI_ButtonLoadSaveTooltip = "从 '%1' 列中加载模组"
+    UI_ButtonUpdateFromEnabledTooltip = "从 '%1' 列中加载模组并更新 '%2'"
+    UI_ButtonUpdateFromSaveTooltip = "从 '%1' 列中加载模组并更新 '%2'"
+    UI_ButtonLoadEnabledTooltip = "从 '%1' 列中加载模组"
+    UI_ButtonCondensedViewOffTooltip = "完整视图 (所有模组)"
+    UI_ButtonCondensedViewOnTooltip = "简化视图 (仅添加/删除)"
+}

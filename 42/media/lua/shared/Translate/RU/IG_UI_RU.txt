@@ -1,0 +1,9 @@
+IGUI_RU = {
+    IGUI_MCTitle = "Несоответствия модов"
+    IGUI_ModsInSave = "Моды в сохранении"
+    IGUI_EnabledMods = "Активные моды"
+    IGUI_ButtonLoadSave = "Загрузить из сохранения"
+    IGUI_ButtonUpdateFromEnabled = "Обновить из сохранения"
+    IGUI_ButtonUpdateFromSave = "Обновить активные"
+    IGUI_ButtonLoadEnabled = "Загрузить активные"
+}

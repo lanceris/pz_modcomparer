@@ -1,0 +1,8 @@
+UI_TH = {
+    UI_ButtonLoadSaveTooltip = "โหลดม็อดจากคอลัมน์ '%1'"
+    UI_ButtonUpdateFromEnabledTooltip = "โหลดม็อดจากคอลัมน์ '%1' และอัปเดต '%2'"
+    UI_ButtonUpdateFromSaveTooltip = "โหลดม็อดจากคอลัมน์ '%1' และอัปเดต '%2'"
+    UI_ButtonLoadEnabledTooltip = "โหลดม็อดจากคอลัมน์ '%1'"
+    UI_ButtonCondensedViewOffTooltip = "มุมมองเต็ม (แสดงม็อดทั้งหมด)"
+    UI_ButtonCondensedViewOnTooltip = "มุมมองย่อ (แสดงเฉพาะม็อดที่ถูกเพิ่ม/ลบ)"
+}
