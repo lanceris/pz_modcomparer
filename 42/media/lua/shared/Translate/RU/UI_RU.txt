@@ -1,8 +1,8 @@
 UI_RU = {
-    UI_ButtonLoadSaveTooltip = "Загрузить моды из '%1'"
-    UI_ButtonUpdateFromEnabledTooltip = "Загрузить моды из '%1' и обновить '%2'"
-    UI_ButtonUpdateFromSaveTooltip = "Загрузить моды из '%1' и обновить '%2'"
-    UI_ButtonLoadEnabledTooltip = "Загрузить моды из '%1'"
-    UI_ButtonCondensedViewOffTooltip = "Полный вид (все моды)"
-    UI_ButtonCondensedViewOnTooltip = "Сжатый вид (только добавленные/удаленные моды)"
+    UI_ButtonLoadSaveTooltip = "Р—Р°РіСЂСѓР·РёС‚СЊ РјРѕРґС‹ РёР· '%1'"
+    UI_ButtonUpdateFromEnabledTooltip = "Р—Р°РіСЂСѓР·РёС‚СЊ РјРѕРґС‹ РёР· '%1' Рё РѕР±РЅРѕРІРёС‚СЊ '%2'"
+    UI_ButtonUpdateFromSaveTooltip = "Р—Р°РіСЂСѓР·РёС‚СЊ РјРѕРґС‹ РёР· '%1' Рё РѕР±РЅРѕРІРёС‚СЊ '%2'"
+    UI_ButtonLoadEnabledTooltip = "Р—Р°РіСЂСѓР·РёС‚СЊ РјРѕРґС‹ РёР· '%1'"
+    UI_ButtonCondensedViewOffTooltip = "РџРѕР»РЅС‹Р№ РІРёРґ (РІСЃРµ РјРѕРґС‹)"
+    UI_ButtonCondensedViewOnTooltip = "РЎР¶Р°С‚С‹Р№ РІРёРґ (С‚РѕР»СЊРєРѕ РґРѕР±Р°РІР»РµРЅРЅС‹Рµ/СѓРґР°Р»РµРЅРЅС‹Рµ РјРѕРґС‹)"
 }
